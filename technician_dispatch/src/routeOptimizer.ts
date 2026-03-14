@@ -67,10 +67,54 @@ export class RouteOptimizer {
         boxes: Box[],
         routeIds: string[]
     ): number | null {
-        // TODO: implement this method
-        throw new Error('Not implemented');
+        if(routeIds.length === 0){
+            return 0;
+        }
+
+        //check if routes are valid
+        for (let index = 0; index < routeIds.length; index++) {
+            try {
+                this.getBoxFromId(boxes, routeIds[index])
+            } catch (error) {
+                return null
+            }
+        }
+
+        if (routeIds.length === 1){
+            let box: Box = this.getBoxFromId(boxes, routeIds[0]);
+            return this.haversineDistance(technician.startLocation, box.location)
+            
+        }
+
+        //greedy algorithm
+        let fullLength = 0
+        let startingLocation = technician.startLocation;
+        while (routeIds.length !== 0) {
+            let BestRoute = routeIds[0]
+            routeIds.forEach(tempRoute => {
+                let tempLength = this.haversineDistance(startingLocation,this.getBoxFromId(boxes,tempRoute).location);
+                let bestLength = this.haversineDistance(startingLocation,this.getBoxFromId(boxes,BestRoute).location);
+                if (tempLength < bestLength){
+                    BestRoute = tempRoute;
+                }
+            });
+            //add to length
+            fullLength += this.haversineDistance(startingLocation,this.getBoxFromId(boxes,BestRoute).location);
+            //change starting position
+            startingLocation = this.getBoxFromId(boxes,BestRoute).location
+            //remove from list
+            routeIds = routeIds.filter(id => id !== BestRoute);
+        }
+        return fullLength;
     }
 
+    getBoxFromId(BoxList: Box[], id: String){
+        let box: Box[] = BoxList.filter(box => box.id === id);
+        if (box.length === 1){
+            return box[0];
+        }
+        throw new Error('Cannot get box');
+    }
     findShortestRoute(technician: Technician, boxes: Box[]): RouteResult {
         // TODO: implement this method
         throw new Error('Not implemented');
