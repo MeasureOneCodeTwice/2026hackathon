@@ -33,9 +33,11 @@ export class RevenueEngine {
         schedule: Schedule,
         decayRate: number
     ): number {
+        return 0;
     }
 
     getAdvertiserDiversity(ads: Ad[], schedule: Schedule): number {
+        return 0;
     }
 
     getAreaRevenue(
