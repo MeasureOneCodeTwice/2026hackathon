@@ -12,7 +12,10 @@ export class RevenueEngine {
         ads: Ad[],
         schedule: Schedule
     ): number {
-        return 0;
+        const scheduledAds = Object.values(schedule).flatMap(x => x);
+        const adIdMap = new Map();
+        ads.forEach(ad => adIdMap.set(ad.adId, ad));
+        return scheduledAds.filter(scheduled => adIdMap.get(scheduled.adId)?.advertiserId === advertiserId).length;
     }
 
     calculateDiminishedRevenue(
@@ -20,7 +23,7 @@ export class RevenueEngine {
         advertiserScheduledCount: number,
         decayRate: number
     ): number {
-        return 0;
+        return baseRevenue * (decayRate ** advertiserScheduledCount);
     }
 
     calculatePlacementRevenue(
@@ -30,11 +33,9 @@ export class RevenueEngine {
         schedule: Schedule,
         decayRate: number
     ): number {
-        return 0;
     }
 
     getAdvertiserDiversity(ads: Ad[], schedule: Schedule): number {
-        return 0;
     }
 
     getAreaRevenue(
