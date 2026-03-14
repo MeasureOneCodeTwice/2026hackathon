@@ -8,4 +8,4 @@ Fork this repo to get started. Each folder has its own README with setup and ins
 
 Submit your work via the form below. See [submission_instructions.md](submission_instructions.md) for how to hand in your fork and what counts for grading.
 
-**[Submit here — Google Form link TBD]**
+**[Submit here](https://docs.google.com/forms/d/e/1FAIpQLSdnZdqmpu610ZODDeetoYbypvy3sYkje1Zc2RjE9pSMU_4CCw/viewform?usp=publish-editor)**
