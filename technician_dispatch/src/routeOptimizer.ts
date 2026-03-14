@@ -115,8 +115,31 @@ export class RouteOptimizer {
         }
         throw new Error('Cannot get box');
     }
+
     findShortestRoute(technician: Technician, boxes: Box[]): RouteResult {
-        // TODO: implement this method
-        throw new Error('Not implemented');
+        //greedy algorithm
+        let fullLength = 0
+        let fullPath: string[] = []
+        let startingLocation = technician.startLocation;
+        while (boxes.length !== 0) {
+            let bestBox = boxes[0]
+            boxes.forEach(box => {
+                let tempLength = this.haversineDistance(startingLocation, box.location);
+                let bestLength = this.haversineDistance(startingLocation, bestBox.location);
+                if (tempLength < bestLength){
+                    bestBox = box;
+                }
+            });
+            //add to length
+            fullLength += this.haversineDistance(startingLocation,bestBox.location);
+            //change starting position
+            startingLocation = bestBox.location
+            //add to list
+            fullPath.push(bestBox.id);
+            //remove from list
+            boxes = boxes.filter(id => id !== bestBox);
+        }
+
+        return {technicianId:technician.id, route:fullPath, totalDistanceKm:fullLength}
     }
 }
