@@ -84,12 +84,75 @@ export class DayPlanner {
         boxes: Box[],
         routeIds: string[]
     ): number | null {
-        // TODO: implement this method
-        throw new Error('Not implemented');
+        for (let index = 0; index < routeIds.length; index++) {
+            try {
+                this.getBoxFromId(boxes, routeIds[index])
+            } catch (error) {
+                return null
+            }
+        }
+
+        let duration = 0;
+        let startingLocation = technician.startLocation;
+        routeIds.forEach(route => {
+            let box = this.getBoxFromId(boxes, route)
+            duration += this.travelTimeMinutes(startingLocation, box.location, technician.speedKmh)
+                    + box.fixTimeMinutes
+            startingLocation = box.location
+        })
+        return duration
+    }
+
+    getBoxFromId(BoxList: Box[], id: String){
+        let box: Box[] = BoxList.filter(box => box.id === id);
+        if (box.length === 1){
+            return box[0];
+        }
+        throw new Error('Cannot get box');
     }
 
     planDay(technician: Technician, boxes: Box[]): DayPlanResult {
-        // TODO: implement this method
-        throw new Error('Not implemented');
+        let maxTime = technician.workingMinutes
+        let boxesFixed = 0
+        let timeUsed = 0
+        let fullPath: string[] = []
+        let startingLocation = technician.startLocation;
+        while (timeUsed < maxTime && boxes.length !== 0) {
+            
+            //find valid box
+            
+            let bestBox = boxes[0]
+
+
+
+            boxes.forEach(box => {
+                let temptimeCost = this.travelTimeMinutes(startingLocation, box.location, technician.speedKmh) + box.fixTimeMinutes
+                if (timeUsed + temptimeCost <= maxTime){
+                    let tempLength = this.haversineDistance(startingLocation, box.location) 
+                    + this.travelTimeMinutes(startingLocation, box.location, technician.speedKmh)
+                    + box.fixTimeMinutes;
+                    let bestLength = this.haversineDistance(startingLocation, box.location) 
+                    + this.travelTimeMinutes(startingLocation, box.location, technician.speedKmh)
+                    + box.fixTimeMinutes;
+                    if (tempLength < bestLength){
+                        bestBox = box;
+                    }
+                }
+            });
+            //add to length
+            timeUsed += this.travelTimeMinutes(startingLocation, bestBox.location, technician.speedKmh) + bestBox.fixTimeMinutes;
+            //change starting position
+            startingLocation = bestBox.location
+            //add to list
+            fullPath.push(bestBox.id);
+            //remove from list
+            boxes = boxes.filter(id => id !== bestBox);
+
+            boxesFixed++;
+        }
+
+        //convert list of boxes to names
+        let boxids: string[] = boxes.map(box => box.id);
+        return {technicianId:technician.id, plannedRoute:fullPath, totalTimeUsedMinutes:timeUsed, boxesFixed:boxesFixed, skippedBoxIds:boxids }
     }
 }
